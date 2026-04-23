@@ -8,7 +8,7 @@ public class Wood3 {
 
     private final Rabbit4 rabbit;
 
-    @Autowired          // связывание через конструктор (constructor injection)
+    @Autowired
     public Wood3(Rabbit4 rabbit) {
         this.rabbit = rabbit;
     }

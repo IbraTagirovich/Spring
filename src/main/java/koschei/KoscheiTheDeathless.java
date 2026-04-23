@@ -9,12 +9,11 @@ public class KoscheiTheDeathless {
 
     private Ocean1 ocean;
 
-    // Метод, который возвращает полную фразу
     public String getRulesByDeth() {
         return "На свете есть океан , " + ocean.toString();
     }
 
-    @Autowired          // связывание через сеттер (setter injection)
+    @Autowired
     public void setOcean(Ocean1 ocean) {
         this.ocean = ocean;
     }

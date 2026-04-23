@@ -8,7 +8,7 @@ public class Egg6 {
 
     private Needle7 needle;
 
-    @Autowired          // связывание через сеттер
+    @Autowired
     public void setNeedle(Needle7 needle) {
         this.needle = needle;
     }

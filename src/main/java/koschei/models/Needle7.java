@@ -8,7 +8,7 @@ public class Needle7 {
 
     private Deth8 death;
 
-    @Autowired          // связывание через сеттер
+    @Autowired
     public void setDeath(Deth8 death) {
         this.death = death;
     }

@@ -1,0 +1,9 @@
+com\example\crud\config\AppConfig.class
+com\example\crud\service\UserServiceImpl.class
+com\example\crud\dao\UserDaoImpl.class
+com\example\crud\service\UserService.class
+com\example\crud\config\WebAppInitializer.class
+com\example\crud\config\HibernateConfig.class
+com\example\crud\controller\UserController.class
+com\example\crud\model\User.class
+com\example\crud\dao\UserDao.class

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Доброжелательная страничка =)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9f3e8 0%, #ffe6d5 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(circle, rgba(255,215,170,0.4) 0%, rgba(255,190,120,0.1) 80%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -15%;
+            right: -5%;
+            width: 65%;
+            height: 65%;
+            background: radial-gradient(circle, rgba(210,180,140,0.35) 0%, rgba(255,220,170,0.05) 80%);
+            border-radius: 60%;
+            filter: blur(90px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .messages-container {
+            position: relative;
+            z-index: 2;
+            max-width: 880px;
+            width: 100%;
+            margin: 0 auto 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            border: 1px solid rgba(255, 245, 230, 0.7);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .message-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 28px 40px -18px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 200, 150, 0.5);
+        }
+
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(135deg, #f5b77a, #e0873a);
+            border-radius: 2rem 0 0 2rem;
+            transition: width 0.2s ease;
+        }
+
+        .message-card:nth-child(odd)::before {
+            background: linear-gradient(135deg, #ffb347, #ff8c1a);
+        }
+        .message-card:nth-child(3n)::before {
+            background: linear-gradient(135deg, #d48d5c, #bb6b2e);
+        }
+        .message-card:nth-child(5n+2)::before {
+            background: linear-gradient(135deg, #f0a35e, #dd7733);
+        }
+
+        .message-card h1 {
+            font-family: 'Playfair Display', 'Inter', serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.01em;
+            color: #2c221b;
+            margin: 0;
+            padding: 1.3rem 1.8rem 1.3rem 2.2rem;
+            line-height: 1.3;
+            word-break: break-word;
+            background: transparent;
+            text-shadow: 0 1px 0 rgba(255,255,240,0.8);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .message-card h1::before {
+            content: '\f10d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: #e28d4c;
+            opacity: 0.7;
+            margin-right: 0.4rem;
+            transition: opacity 0.2s;
+            display: inline-block;
+        }
+
+        .message-card:hover h1::before {
+            opacity: 1;
+            color: #c96f2c;
+        }
+
+        .message-card h1::after {
+            content: ' ✦';
+            font-size: 1.2rem;
+            font-weight: 300;
+            font-family: system-ui, 'Segoe UI', monospace;
+            color: #d9a066;
+            margin-left: 0.5rem;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1.2rem;
+            }
+            .messages-container {
+                gap: 1rem;
+            }
+            .message-card h1 {
+                font-size: 1.3rem;
+                padding: 1rem 1.2rem 1rem 1.6rem;
+            }
+            .message-card h1::before {
+                font-size: 1.1rem;
+            }
+            .message-card h1::after {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .message-card h1 {
+                font-size: 1.15rem;
+                padding: 0.9rem 1rem 0.9rem 1.4rem;
+            }
+        }
+
+        .message-card {
+            opacity: 0;
+            animation: fadeSlideUp 0.5s ease forwards;
+        }
+        .message-card:nth-child(1) { animation-delay: 0.05s; }
+        .message-card:nth-child(2) { animation-delay: 0.1s; }
+        .message-card:nth-child(3) { animation-delay: 0.15s; }
+        .message-card:nth-child(4) { animation-delay: 0.2s; }
+        .message-card:nth-child(5) { animation-delay: 0.25s; }
+        .message-card:nth-child(6) { animation-delay: 0.3s; }
+        .message-card:nth-child(7) { animation-delay: 0.35s; }
+        .message-card:nth-child(8) { animation-delay: 0.4s; }
+        .message-card:nth-child(9) { animation-delay: 0.45s; }
+        .message-card:nth-child(10) { animation-delay: 0.5s; }
+
+        @keyframes fadeSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .messages-container:empty::before {
+            content: "✨ No messages yet. ✨";
+            font-size: 1.4rem;
+            text-align: center;
+            display: block;
+            background: rgba(255,255,240,0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 2rem;
+            padding: 2rem;
+            color: #a37752;
+            font-weight: 500;
+            font-family: 'Inter', monospace;
+        }
+
+        .car-request-panel {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            max-width: 880px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(255, 248, 240, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.8rem 1.8rem;
+            border-radius: 4rem;
+            border: 1px solid rgba(230, 180, 130, 0.4);
+            box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.08);
+        }
+
+        .count-input {
+            font-family: 'Inter', monospace;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.7rem 1rem;
+            width: 100px;
+            text-align: center;
+            border: 1px solid #e6c8aa;
+            border-radius: 2.5rem;
+            background: white;
+            color: #3a2a1c;
+            transition: all 0.2s;
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .count-input:focus {
+            border-color: #e28d4c;
+            box-shadow: 0 0 0 3px rgba(226, 141, 76, 0.2);
+        }
+
+        .count-input::-webkit-outer-spin-button,
+        .count-input::-webkit-inner-spin-button {
+            opacity: 0.5;
+        }
+        .count-input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .single-nav-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: rgba(255, 242, 230, 0.98);
+            backdrop-filter: blur(4px);
+            padding: 0.7rem 1.8rem;
+            border-radius: 3rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: -0.2px;
+            color: #4a2e1e;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(230, 180, 130, 0.6);
+            box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            background: #ffffffea;
+        }
+
+        .single-nav-button i {
+            font-size: 1.2rem;
+            color: #c26828;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .single-nav-button:hover {
+            background: #ffffff;
+            border-color: #e2a16a;
+            transform: translateY(-3px);
+            box-shadow: 0 18px 28px -12px rgba(0, 0, 0, 0.2);
+            color: #2c1c10;
+        }
+
+        .single-nav-button:hover i {
+            transform: translateX(3px);
+            color: #e07c2c;
+        }
+
+        .single-nav-button:active {
+            transform: translateY(1px);
+        }
+
+        .input-label {
+            font-weight: 500;
+            color: #6b4c2e;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 560px) {
+            .car-request-panel {
+                flex-wrap: wrap;
+                border-radius: 2rem;
+                padding: 1rem;
+                gap: 0.8rem;
+            }
+            .count-input {
+                width: 80px;
+                font-size: 0.9rem;
+            }
+            .single-nav-button {
+                padding: 0.6rem 1.4rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        body {
+            background-image: radial-gradient(circle at 10% 30%, rgba(255,215,185,0.3) 2%, transparent 2.5%);
+            background-size: 28px 28px;
+        }
+
+        .message-card h1 {
+            font-weight: 550;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .message-card:focus-within {
+            outline: 2px solid #e28d4c;
+            outline-offset: 2px;
+            border-radius: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="messages-container">
+    <th:block th:each="msg : ${messages}">
+        <div class="message-card">
+            <h1 th:text="${msg}"></h1>
+        </div>
+    </th:block>
+</div>
+
+<div class="car-request-panel">
+    <span class="input-label"><i class="fas fa-car"></i> Показать машин:</span>
+    <input type="number" id="carCountInput" class="count-input" value="0" min="0" max="100" step="1">
+    <button id="viewCarsBtn" class="single-nav-button">
+        <i class="fas fa-car-side"></i>
+        <span>Посмотреть →</span>
+    </button>
+</div>
+
+<script>
+    const input = document.getElementById('carCountInput');
+    input.addEventListener('keydown', (e) => {
+        const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
+        if (allowedKeys.includes(e.key)) {
+            return;
+        }
+
+        if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+        }
+    });
+
+    input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        let pasted = (e.clipboardData || window.clipboardData).getData('text');
+        let numeric = pasted.replace(/[^\d]/g, '');
+        if (numeric === '') numeric = '1';
+        let num = parseInt(numeric, 10);
+        if (isNaN(num) || num < 1) num = 1;
+        if (num > 100) num = 100;
+        input.value = num;
+    });
+
+    const button = document.getElementById('viewCarsBtn');
+    button.addEventListener('click', () => {
+        let count = parseInt(input.value, 10);
+        // Проверка на корректное число
+        if (isNaN(count) || count < 1) {
+            count = 1;
+            input.value = 1;
+        }
+        if (count > 100) {
+            count = 100;
+            input.value = 100;
+        }
+
+        const url = `http://localhost:8080/cars?count=${count}`;
+        window.location.href = url;
+    });
+
+    input.addEventListener('change', () => {
+        let val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 1) {
+            input.value = 1;
+        } else if (val > 100) {
+            input.value = 100;
+        }
+    });
+</script>
+</body>
+</html>
